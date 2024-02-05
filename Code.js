@@ -40,8 +40,7 @@ function genMatch(e) {
 
 }
 
-// create a function that retrieves the names from E9 to E43 and copy them to k3
-function getNames() {
+function performRaffle() {
   const sheet = SpreadsheetApp.getActiveSheet();
   // check if the active sheet name starts with PSG or PARIS and if it does not, return
   if (!(sheet.getName().startsWith("PSG") || sheet.getName().startsWith("PARIS"))) {
@@ -50,32 +49,33 @@ function getNames() {
 
   // get the names from E9 to E43 and filter out the empty strings
   const participant_names = sheet.getRange('E9:E43').getValues().flat().filter(name => name);
+
+  // filer the names if it is a prestige game excluding the ones that already won
   let filtered_names = participant_names;
   // if f3 has the value "Prestige"
   if (sheet.getRange('F3').getValue() === "Prestige") {
     // filter out the names from E9 to E43 where column J does not have the value start with "déjà tiré"
     filtered_names = participant_names.filter((name, i) => !sheet.getRange(`J${i + 9}`).getValue().toString().startsWith("déjà tiré"));
   }
-  // append with the names from E9 to E43 but only the ones where column I is true
-  const names = filtered_names.concat(sheet.getRange('E9:E43').getValues().flat().filter((name, i) => sheet.getRange(`I${i + 9}`).getValue() === true));
-  // set the value of K3 to the joined names
-  sheet.getRange('K3').setValue("Tirage : " + names.join(', '));
-  // within the names, randomly select 2 names and set the value of K4 to the selected names, and change the background color to blue for selected names from C to I
-  const selectedNames = names.sort(() => Math.random() - 0.5).slice(0, 2);
-  // if selectedNames are the same, select again
-  while (selectedNames[0] === selectedNames[1]) {
-    selectedNames[1] = names.sort(() => Math.random() - 0.5).slice(0, 1);
-  }
-  sheet.getRange('K4').setValue("Gagnants : "+ selectedNames.join(', '));
-  selectedNames.forEach(name => {
-    // get the row of the selected name in the range E9:E43
-    const row = participant_names.indexOf(name);
 
-    // set the background color to sky blue for the selected names from C to I
+  // append with the names of participants coming to the match: from E9 to E43 but only the ones where column I is true
+  const names = filtered_names.concat(sheet.getRange('E9:E43').getValues().flat().filter((name, i) => sheet.getRange(`I${i + 9}`).getValue() === true));
+  // print the names to be used for the raffle in K3
+  sheet.getRange('K3').setValue("Tirage : " + names.join(', '));
+
+  // within the names, randomly select 2 names
+  const winners = names.sort(() => Math.random() - 0.5).slice(0, 2);
+  // if winners are the same, select again
+  while (winners[0] === winners[1]) {
+    winners[1] = names.sort(() => Math.random() - 0.5).slice(0, 1);
+  }
+
+  // print the winners in K4
+  sheet.getRange('K4').setValue("Gagnants : "+ winners.join(', '));
+  // set the background color to sky blue for the selected names from C to I
+  winners.forEach(name => {
+    const row = participant_names.indexOf(name);
     sheet.getRange(`C${row + 9}:I${row + 9}`).setBackground('#87CEEB');
 
   });
-
-
-
 }
