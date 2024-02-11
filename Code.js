@@ -109,6 +109,22 @@ function performRaffle2() {
   const row = participant_names.indexOf(winner[0]);
   sheet.getRange(`C${row + 9}:I${row + 9}`).setBackground('#87CEEB');
 
+  // get gchat webhook url from property gchat_webhook
+  const webhook = PropertiesService.getScriptProperties().getProperty('gchat_webhook');
+  // if webhook is not set, return
+  if (!webhook) {
+    return;
+  }
+  // send a message to the gchat webhook
+  const message = {
+    "text": `Tirage 2 pour le match ${sheet.getName()} \n🎉🎉🎉 Gagnant : ${winner}`
+  };
+  const options = {
+    "method": "post",
+    "contentType": "application/json",
+    "payload": JSON.stringify(message)
+  };
+  UrlFetchApp.fetch(webhook, options);
 }
 
 function trigger_tirage2_PSG_RealSociedad() {
