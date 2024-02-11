@@ -82,6 +82,7 @@ function performRaffle() {
 
 function performRaffle2() {
   const sheet = SpreadsheetApp.getActiveSheet();
+  Logger.log("Active sheet from performRaffle2: " + SpreadsheetApp.getActiveSheet().getName());
   if (!(sheet.getName().startsWith("PSG") || sheet.getName().startsWith("PARIS"))) {
     return;
   }
@@ -109,3 +110,10 @@ function performRaffle2() {
   sheet.getRange(`C${row + 9}:I${row + 9}`).setBackground('#87CEEB');
 
 }
+
+function trigger_tirage2_PSG_RealSociedad() {
+  SpreadsheetApp.setActiveSheet(SpreadsheetApp.getActive().getSheetByName("PSG/REAL SOCIEDAD (LDC  1/8ème) 14/02/2024"));
+  Logger.log("Active sheet: " + SpreadsheetApp.getActiveSheet().getName());
+  performRaffle2();
+}
+
