@@ -79,3 +79,33 @@ function performRaffle() {
 
   });
 }
+
+function performRaffle2() {
+  const sheet = SpreadsheetApp.getActiveSheet();
+  if (!(sheet.getName().startsWith("PSG") || sheet.getName().startsWith("PARIS"))) {
+    return;
+  }
+
+  const participant_names = sheet.getRange('E9:E43').getValues().flat().filter(name => name);
+
+  let filtered_names = participant_names;
+  if (sheet.getRange('F3').getValue() === "Prestige") {
+    filtered_names = participant_names.filter((name, i) => !sheet.getRange(`J${i + 9}`).getValue().toString().startsWith("déjà tiré"));
+  }
+
+  const names = filtered_names.concat(sheet.getRange('E9:E43').getValues().flat().filter((name, i) => sheet.getRange(`I${i + 9}`).getValue() === true));
+  sheet.getRange('K5').setValue("Tirage 2 : " + names.join(', '));
+  Logger.log("Tirage 2 : " + names.join(', '));
+  let winner = names.sort(() => Math.random() - 0.5).slice(0, 1);
+  Logger.log("winners tirage 1: " + sheet.getRange('K4').getValue().toString().split(' : ')[1].split(', ')[0] + ", " + sheet.getRange('K4').getValue().toString().split(' : ')[1].split(', ')[1]);
+  // if winner is the same as any of the values in K4 (removing prefix Gagnants : ), select again
+  while (sheet.getRange('K4').getValue().toString().split(' : ')[1].split(', ').includes(winner[0])) {
+    winner = names.sort(() => Math.random() - 0.5).slice(0, 1);
+  }
+
+  sheet.getRange('K6').setValue("Gagnant tirage 2 : " + winner);
+  Logger.log("Gagnant tirage 2 : " + winner);
+  const row = participant_names.indexOf(winner[0]);
+  sheet.getRange(`C${row + 9}:I${row + 9}`).setBackground('#87CEEB');
+
+}
