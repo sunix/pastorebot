@@ -78,6 +78,18 @@ function performRaffle() {
     sheet.getRange(`C${row + 9}:I${row + 9}`).setBackground('#87CEEB');
 
   });
+
+  const owner_userid = PropertiesService.getScriptProperties().getProperty('owner_userid');
+
+  sendMessageToGChat(`Tirage pour le match ${sheet.getName()} \n🎉🎉🎉 Gagnants : ${winners.join(', ')}\n` +
+    "Bravo "+ winners.join(', ') + ",\n" +
+    "Comme d'habitude :\n" +
+    "1. Veuillez effectuer un virement de [prix] euros (IBAN indiqué dans le document)\n" +
+    `2. Merci de m'envoyer (DM sur <users/${owner_userid}>)\n` +
+    "  - les noms et prénoms des personnes assistant au match,\n" +
+    "  - un screenshot du virement.\n" +
+    "MERCI !!! Et n'oubliez pas de faire quelques photos pendant le match !"
+  , sheet.getName());
 }
 
 function performRaffle2() {
@@ -132,4 +144,25 @@ function trigger_tirage2_PSG_RealSociedad() {
   Logger.log("Active sheet: " + SpreadsheetApp.getActiveSheet().getName());
   performRaffle2();
 }
+
+function sendMessageToGChat(text, threadKey) {
+  const webhookURL = PropertiesService.getScriptProperties().getProperty('gchat_webhook');
+  // if webhook is not set, return
+  if (!webhookURL) {
+    return;
+  }
+  const message = {
+    "text": text,
+    "thread": {"threadKey": threadKey}
+  };
+  const options = {
+    "method": "post",
+    "contentType": "application/json",
+    "payload": JSON.stringify(message)
+  };
+  // send the message and log it
+  const response = UrlFetchApp.fetch(webhookURL, options);
+  Logger.log(response);
+}
+
 
