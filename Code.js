@@ -79,17 +79,19 @@ function performRaffle() {
 
   });
 
-  const owner_userid = PropertiesService.getScriptProperties().getProperty('owner_userid');
 
-  sendMessageToGChat(`Tirage pour le match ${sheet.getName()} \n🎉🎉🎉 Gagnants : ${winners.join(', ')}\n` +
-    "Bravo "+ winners.join(', ') + ",\n" +
+  const owner_userid = PropertiesService.getScriptProperties().getProperty('owner_userid');
+  const winnersMessage = `Tirage pour le match ${sheet.getName()} \n🎉🎉🎉 Gagnants : ${winners.join(', ')}\n` +
+    "Bravo " + winners.join(', ') + ",\n" +
     "Comme d'habitude :\n" +
     "1. Veuillez effectuer un virement de [prix] euros (IBAN indiqué dans le document)\n" +
     `2. Merci de m'envoyer (DM sur <users/${owner_userid}>)\n` +
     "  - les noms et prénoms des personnes assistant au match,\n" +
     "  - un screenshot du virement.\n" +
-    "MERCI !!! Et n'oubliez pas de faire quelques photos pendant le match !"
-  , sheet.getName());
+    "MERCI !!! Et n'oubliez pas de faire quelques photos pendant le match !";
+
+  sendMessageToGChat(winnersMessage, sheet.getName());
+
 }
 
 function performRaffle2() {
