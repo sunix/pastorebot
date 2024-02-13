@@ -71,7 +71,7 @@ function performRaffle() {
   }
 
   // print the winners in K4
-  sheet.getRange('K4').setValue("Gagnants : "+ winners.join(', '));
+  sheet.getRange('K4').setValue("Gagnants : " + winners.join(', '));
   // set the background color to sky blue for the selected names from C to I
   winners.forEach(name => {
     const row = participant_names.indexOf(name);
@@ -140,7 +140,7 @@ function sendMessageToGChat(text, threadKey) {
   }
   const message = {
     "text": text,
-    "thread": {"threadKey": threadKey}
+    "thread": { "threadKey": threadKey }
   };
   const options = {
     "method": "post",
