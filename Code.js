@@ -127,23 +127,10 @@ function performRaffle2() {
   if (!webhook) {
     return;
   }
-  // send a message to the gchat webhook
-  const message = {
-    "text": `Tirage 2 pour le match ${sheet.getName()} \n🎉🎉🎉 Gagnant : ${winner}`
-  };
-  const options = {
-    "method": "post",
-    "contentType": "application/json",
-    "payload": JSON.stringify(message)
-  };
-  UrlFetchApp.fetch(webhook, options);
+
+  sendMessageToGChat(`Tirage 2 pour le match ${sheet.getName()} \n🎉🎉🎉 Gagnant : ${winner}`, sheet.getName());
 }
 
-function trigger_tirage2_PSG_RealSociedad() {
-  SpreadsheetApp.setActiveSheet(SpreadsheetApp.getActive().getSheetByName("PSG/REAL SOCIEDAD (LDC  1/8ème) 14/02/2024"));
-  Logger.log("Active sheet: " + SpreadsheetApp.getActiveSheet().getName());
-  performRaffle2();
-}
 
 function sendMessageToGChat(text, threadKey) {
   const webhookURL = PropertiesService.getScriptProperties().getProperty('gchat_webhook');
