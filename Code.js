@@ -38,6 +38,10 @@ function genMatch(e) {
   cell.setValue(" ");
   cell.clearFormat();
 
+  // get the raffle date
+  const raffleDate = getRaffleDate(gameDateTime);
+  // create a time trigger for the raffle
+  createTimeTrigger(newSheet.getName(), raffleDate);
 }
 
 function performRaffle() {
@@ -198,4 +202,24 @@ function frenchDate(date) {
   var d = day[date.getDay()];
   var dateStringFr = d + ' ' + date.getDate() + ' ' + m + ' ' + date.getFullYear() + ' à ' + date.getHours() + 'h' + `${date.getMinutes() < 10 ? '0' : ''}` + date.getMinutes();
   return dateStringFr
+}
+
+
+function getRaffleDate(matchDate) {
+  // should be the week before either on wednesday if the match is from monday to thursday or on friday if the match is from friday to sunday
+  const day = matchDate.getDay();
+  const date = matchDate.getDate();
+  const month = matchDate.getMonth();
+  const year = matchDate.getFullYear();
+  let raffleDate;
+  // should be the week before either on wednesday if the match is from monday to thursday at noon
+  if (day >= 1 && day <= 4) {
+    raffleDate = new Date(year, month, date - 7 + (3 - day), 12, 0, 0);
+    // wednesday of the current week
+
+  } else {
+    // or on friday if the match is from friday to sunday at noon
+    raffleDate = new Date(year, month, date - 7 - (day - 5), 12, 0, 0);
+  }
+  return raffleDate;
 }
