@@ -155,12 +155,6 @@ function sendMessageToGChat(text, threadKey) {
   Logger.log(response);
 }
 
-function sendMessageTriggerCreatedForParisRennes() {
-  const sheetName = "PARIS/RENNES (J23) 25/02/2024";
-  const date = new Date('February 16, 2024 12:00:00 GMT+0100');
-  createTimeTrigger(sheetName, date);
-}
-
 function createTimeTrigger(sheetName, date) {
   // create a time based trigger at a specific date
   const trigger =
@@ -172,7 +166,7 @@ function createTimeTrigger(sheetName, date) {
   // set the sheet name as a property of the trigger
   PropertiesService.getScriptProperties().setProperty(trigger.getUniqueId(), sheetName);
   // send a message to the gchat webhook to tell that the raffle will be performed at a specific date (format the date to french locale string)
-  sendMessageToGChat(`Le tirage pour le match ${sheetName} sera effectué le ${date.toLocaleString('fr-FR')}`, sheetName);
+  sendMessageToGChat(`Le tirage pour le match ${sheetName} sera effectué le ${frenchDate(date)}`, sheetName);
 }
 
 function triggerRaffle(event) {
@@ -195,4 +189,13 @@ function triggerRaffle(event) {
   PropertiesService.getScriptProperties().deleteProperty(event.triggerUid);
   Logger.log("Trigger deleted");
 
+}
+
+function frenchDate(date) {
+  var month = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+  var day = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+  var m = month[date.getMonth()];
+  var d = day[date.getDay()];
+  var dateStringFr = d + ' ' + date.getDate() + ' ' + m + ' ' + date.getFullYear() + ' à ' + date.getHours() + 'h' + `${date.getMinutes() < 10 ? '0' : ''}` + date.getMinutes();
+  return dateStringFr
 }
