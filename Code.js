@@ -42,6 +42,8 @@ function genMatch(e) {
   const raffleDate = getRaffleDate(gameDateTime);
   // create a time trigger for the raffle
   createTimeTrigger(newSheet.getName(), raffleDate);
+  // in c4, set the raffle date
+  newSheet.getRange('C4').setValue("Tirage le " + frenchDate(raffleDate));
 }
 
 function performRaffle() {
