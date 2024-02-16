@@ -84,12 +84,14 @@ function performRaffle() {
 
   });
 
+  // get the price from G5
+  const price = sheet.getRange('G5').getValue();
 
   const owner_userid = PropertiesService.getScriptProperties().getProperty('owner_userid');
   const winnersMessage = `Tirage pour le match ${sheet.getName()} \n🎉🎉🎉 Gagnants : ${winners.join(', ')}\n` +
     "Bravo " + winners.join(', ') + ",\n" +
     "Comme d'habitude :\n" +
-    "1. Veuillez effectuer un virement de [prix] euros (IBAN indiqué dans le document)\n" +
+    `1. Veuillez effectuer un virement de ${price} euros (IBAN indiqué dans le document partagé)\n` +
     `2. Merci de m'envoyer (DM sur <users/${owner_userid}>)\n` +
     "  - les noms et prénoms des personnes assistant au match,\n" +
     "  - un screenshot du virement.\n" +
