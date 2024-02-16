@@ -67,6 +67,8 @@ function performRaffle() {
   const names = filtered_names.concat(sheet.getRange('E9:E43').getValues().flat().filter((name, i) => sheet.getRange(`I${i + 9}`).getValue() === true));
   // print the names to be used for the raffle in K3
   sheet.getRange('K3').setValue("Tirage : " + names.join(', '));
+  // log the names to be used for the raffle
+  Logger.log("Tirage : " + names.join(', '));
 
   // within the names, randomly select 2 names
   const winners = names.sort(() => Math.random() - 0.5).slice(0, 2);
@@ -77,6 +79,9 @@ function performRaffle() {
 
   // print the winners in K4
   sheet.getRange('K4').setValue("Gagnants : " + winners.join(', '));
+  // log the winners
+  Logger.log("Gagnants : " + winners.join(', '));
+
   // set the background color to sky blue for the selected names from C to I
   winners.forEach(name => {
     const row = participant_names.indexOf(name);
@@ -87,9 +92,16 @@ function performRaffle() {
   // get the price from G5
   const price = sheet.getRange('G5').getValue();
 
+  // get winners' email from column F and get the user id from the email
+  const winnersEmail = winners.map(winner => sheet.getRange(`F${participant_names.indexOf(winner) + 9}`).getValue());
+  const winnersUserId = winnersEmail.map(email => {
+    const user = People.People.searchDirectoryPeople({ query: email, readMask: 'emailAddresses', sources: ['DIRECTORY_SOURCE_TYPE_DOMAIN_PROFILE'] }).people[0];
+    return user.resourceName.split('/')[1];
+  });
+
   const owner_userid = PropertiesService.getScriptProperties().getProperty('owner_userid');
   const winnersMessage = `Tirage pour le match ${sheet.getName()} \n🎉🎉🎉 Gagnants : ${winners.join(', ')}\n` +
-    "Bravo " + winners.join(', ') + ",\n" +
+    "Bravo " + winnersUserId.map(winner => `<users/${winner}>`).join(', ') + " !\n" +
     "Comme d'habitude :\n" +
     `1. Veuillez effectuer un virement de ${price} euros (IBAN indiqué dans le document partagé)\n` +
     `2. Merci de m'envoyer (DM sur <users/${owner_userid}>)\n` +
@@ -98,6 +110,8 @@ function performRaffle() {
     "MERCI !!! Et n'oubliez pas de faire quelques photos pendant le match !";
 
   sendMessageToGChat(winnersMessage, sheet.getName());
+  // log the message
+  Logger.log(winnersMessage);
 
 }
 
