@@ -187,8 +187,11 @@ function createTimeTrigger(sheetName, date) {
   Logger.log('Trigger ID: ' + trigger.getUniqueId());
   // set the sheet name as a property of the trigger
   PropertiesService.getScriptProperties().setProperty(trigger.getUniqueId(), sheetName);
+  // get the url of the sheet
+  const url = SpreadsheetApp.getActiveSpreadsheet().getUrl();
   // send a message to the gchat webhook to tell that the raffle will be performed at a specific date (format the date to french locale string)
-  sendMessageToGChat(`Le tirage pour le match ${sheetName} sera effectué le ${frenchDate(date)}`, sheetName);
+  sendMessageToGChat(`Le tirage pour le match ${sheetName} sera effectué le ${frenchDate(date)}. \nInscriptions sur le lien suivant (onglet ${sheetName}) : ${url}`, sheetName);
+
 }
 
 function triggerRaffle(event) {
