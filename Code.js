@@ -72,12 +72,7 @@ function performRaffle() {
   // log the names to be used for the raffle
   Logger.log("Tirage : " + names.join(', '));
 
-  // within the names, randomly select 2 names
-  const winners = names.sort(() => Math.random() - 0.5).slice(0, 2);
-  // if winners are the same, select again
-  while (winners[0] === winners[1]) {
-    winners[1] = names.sort(() => Math.random() - 0.5).slice(0, 1);
-  }
+  const winners = randomlySelect2names(names);
 
   // print the winners in K4
   sheet.getRange('K4').setValue("Gagnants : " + winners.join(', '));
@@ -115,6 +110,29 @@ function performRaffle() {
   // log the message
   Logger.log(winnersMessage);
 
+}
+
+function randomlySelect2names(names) {
+    // within the names, randomly select 2 names
+  const sortedNames = names.sort(() => random() - 0.5);
+  Logger.log(`sorted names: ${sortedNames.join(',')}`);
+  const winners = sortedNames.slice(0, 2);
+  // if winners are the same, select again
+  while (winners[0] === winners[1]) {
+    winners[1] = names.sort(() => random() - 0.5).slice(0, 1);
+  }
+  return winners;
+}
+
+function random(){
+  const rd = Math.random();
+  Logger.log(`random: ${rd}`);
+  return rd;
+}
+
+function testRandomlySelect2names() {
+  const winners = randomlySelect2names(["djamel-eddine", "Dorian", "Ilaria", "Maroun", "Joseph", "Maroun", "Joseph"]);
+  Logger.log(winners.join(','));
 }
 
 function performRaffle2() {
