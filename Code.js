@@ -164,14 +164,18 @@ function performRaffle2() {
   const row = participant_names.indexOf(winner[0]);
   sheet.getRange(`C${row + 9}:I${row + 9}`).setBackground('#87CEEB');
 
-  // get gchat webhook url from property gchat_webhook
-  const webhook = PropertiesService.getScriptProperties().getProperty('gchat_webhook');
-  // if webhook is not set, return
-  if (!webhook) {
-    return;
-  }
+  const owner_userid = PropertiesService.getScriptProperties().getProperty('owner_userid');
+  const price = sheet.getRange('G5').getValue();
+  const winnersMessage = `Tirage 2 pour le match ${sheet.getName()} \n🎉🎉🎉 Gagnants : ${winner}\n` +
+    "Bravo " + `<users/${winner}>` + " !\n" +
+    "Comme d'habitude :\n" +
+    `1. Merci d'effectuer un virement de ${price} euros (IBAN indiqué dans le document partagé)\n` +
+    `2. Merci de m'envoyer (DM sur <users/${owner_userid}>)\n` +
+    "  - les noms et prénoms des personnes assistant au match,\n" +
+    "  - un screenshot du virement.\n" +
+    "MERCI !!! Et n'oublies pas de faire quelques photos pendant le match !";
 
-  sendMessageToGChat(`Tirage 2 pour le match ${sheet.getName()} \n🎉🎉🎉 Gagnant : ${winner}`, sheet.getName());
+  sendMessageToGChat(winnersMessage, sheet.getName());
 }
 
 
