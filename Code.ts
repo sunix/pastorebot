@@ -25,7 +25,11 @@ function genMatch(e) {
 
 
   const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  const newSheet = spreadsheet.getSheetByName("template").copyTo(spreadsheet);
+  const templateSheet = spreadsheet.getSheetByName("template");
+  if (!templateSheet) {
+    return;
+  }
+  const newSheet = templateSheet.copyTo(spreadsheet);
   newSheet.setName(gameName + ' ' + Utilities.formatDate(gameDateTime, "GMT+1", "dd/MM/yyyy"));
   newSheet.getRange('C4').setValue(gameDateTime);
   newSheet.getRange('G5').setValue(price);
@@ -65,8 +69,9 @@ function performRaffle() {
     filtered_names = participant_names.filter((name, i) => !sheet.getRange(`J${i + 9}`).getValue().toString().startsWith("déjà tiré"));
   }
 
-  // append with the names of participants coming to the match: from E9 to E43 but only the ones where column I is true
-  const names = filtered_names.concat(sheet.getRange('E9:E43').getValues().flat().filter((name, i) => sheet.getRange(`I${i + 9}`).getValue() === true));
+  // append with the names of participants coming to the match: from E9 to E43 but only the ones where column I is true and where column J does not have the value start with "déjà tiré 2 fois"
+  const names = filtered_names.concat(sheet.getRange('E9:E43').getValues().flat().filter((name, i) => sheet.getRange(`I${i + 9}`).getValue() === true && !sheet.getRange(`J${i + 9}`).getValue().toString().startsWith("déjà tiré 2 fois")));
+
   // print the names to be used for the raffle in K3
   sheet.getRange('K3').setValue("Tirage : " + names.join(', '));
   // log the names to be used for the raffle
@@ -90,9 +95,11 @@ function performRaffle() {
   const price = sheet.getRange('G5').getValue();
 
   // get winners' email from column F and get the user id from the email
+  const people = People.People as any; // Type assertion to ensure 'People' object is defined
+
   const winnersEmail = winners.map(winner => sheet.getRange(`F${participant_names.indexOf(winner) + 9}`).getValue());
   const winnersUserId = winnersEmail.map(email => {
-    const user = People.People.searchDirectoryPeople({ query: email, readMask: 'emailAddresses', sources: ['DIRECTORY_SOURCE_TYPE_DOMAIN_PROFILE'] }).people[0];
+    const user = people.searchDirectoryPeople({ query: email, readMask: 'emailAddresses', sources: ['DIRECTORY_SOURCE_TYPE_DOMAIN_PROFILE'] }).people[0];
     return user.resourceName.split('/')[1];
   });
 
@@ -113,8 +120,13 @@ function performRaffle() {
 }
 
 function randomlySelect2names(names) {
-    // within the names, randomly select 2 names
-  const sortedNames = names.sort(() => random() - 0.5);
+  // within the names, randomly select 2 names
+  let sortedNames = names.sort(() => random() - 0.5);
+  // repeat the sorting to make it more random do it as many times as the number of names
+  for (let i = 0; i < names.length; i++) {
+    sortedNames = sortedNames.sort(() => random() - 0.5);
+  }
+
   Logger.log(`sorted names: ${sortedNames.join(',')}`);
   const winners = sortedNames.slice(0, 2);
   // if winners are the same, select again
@@ -124,15 +136,9 @@ function randomlySelect2names(names) {
   return winners;
 }
 
-function random(){
+function random() {
   const rd = Math.random();
-  Logger.log(`random: ${rd}`);
   return rd;
-}
-
-function testRandomlySelect2names() {
-  const winners = randomlySelect2names(["djamel-eddine", "Dorian", "Ilaria", "Maroun", "Joseph", "Maroun", "Joseph"]);
-  Logger.log(winners.join(','));
 }
 
 function performRaffle2() {
@@ -189,7 +195,7 @@ function sendMessageToGChat(text, threadKey) {
     "text": text,
     "thread": { "threadKey": threadKey }
   };
-  const options = {
+  const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     "method": "post",
     "contentType": "application/json",
     "payload": JSON.stringify(message)
@@ -221,8 +227,11 @@ function triggerRaffle(event) {
   const sheetName = PropertiesService.getScriptProperties().getProperty(event.triggerUid);
   Logger.log("Sheet name from property: " + sheetName);
   if (sheetName) {
-    SpreadsheetApp.setActiveSheet(SpreadsheetApp.getActive().getSheetByName(sheetName));
-    performRaffle();
+    const sheet = SpreadsheetApp.getActive().getSheetByName(sheetName);
+    if (sheet) {
+      SpreadsheetApp.setActiveSheet(sheet);
+      performRaffle();
+    }
   }
 
   // delete the trigger
@@ -262,7 +271,12 @@ function getRaffleDate(matchDate) {
 
   } else {
     // or on friday if the match is from friday to sunday at noon
-    raffleDate = new Date(year, month, date - 7 - (day - 5), 12, 0, 0);
+    if (day === 0) {
+      raffleDate = new Date(year, month, date - 7 - 2, 12, 0, 0);
+    }
+    else {
+      raffleDate = new Date(year, month, date - 7 - (day - 5), 12, 0, 0);
+    }
   }
   return raffleDate;
 }
