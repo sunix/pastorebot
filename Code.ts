@@ -1,3 +1,13 @@
+function onOpen() {
+  // create a menu in the spreadsheet to run the function in NewSeason.ts
+  const ui = SpreadsheetApp.getUi();
+  ui.createMenu('PSG')
+    .addItem('Convert selected WEEK END DU to date time', 'runConvertWeekEndDateToDateTime')
+    .addToUi();
+}
+
+
+
 function genMatch(e) {
 
   const sheet = SpreadsheetApp.getActiveSheet();
