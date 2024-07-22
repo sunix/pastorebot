@@ -2,23 +2,53 @@
 function runConvertWeekEndDateToDateTime() {
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
 
-    // get the year
-    const year = getYear(sheet);
+    // store the year
+    let year = 2020;
 
+    const matchDateRange = sheet.getRange('B:B');
+    const matchTitleRange = sheet.getRange('C:C');
+    const matchIsPrestigeRange = sheet.getRange('A:A');
+    const matchGenMatchRange = sheet.getRange('D:D');
 
-    const selectedRange = sheet.getActiveRange();
-    if (selectedRange !== null) {
-      const values = selectedRange.getValues();
-      const newValues = values.map(row => row.map(cell => convertWeekEndDateToDateTime(cell, year)));
-      selectedRange.setValues(newValues);
-      selectedRange.setNumberFormat('dddd DD MMMM YYYY - HH:mm');
+    // get the last row
+    const lastRow = 50;
+    // iterate through the cells
+    for (let i = 1; i <= lastRow; i++) {
+        const cell = matchDateRange.getCell(i, 1);
+        // if cell is string and contains the year
+        if (/20\d\d/.test(cell.getValue().toString())) {
+            year = parseInt(cell.getValue().toString());
+        }
+        // if cell is string and start with WEEK END DU
+        if (typeof cell.getValue() === 'string' && cell.getValue().startsWith('WEEK END DU')) {
+            cell.setValue(convertWeekEndDateToDateTime(cell.getValue(), year));
+        }
+        // if cell is string and format DIMANCHE 6 AVRIL
+        if (typeof cell.getValue() === 'string' && cell.getValue().match(/(LUNDI|MARDI|MERCREDI|JEUDI|VENDREDI|SAMEDI|DIMANCHE) \d+ (JANVIER|FEVRIER|MARS|AVRIL|MAI|JUIN|JUILLET|AOUT|SEPTEMBRE|OCTOBRE|NOVEMBRE|DECEMBRE)/)) {
+            const date = cell.getValue().split(' ');
+            const month = getMonthJSIndex(date[2]);
+            const day = parseInt(date[1]);
+            cell.setValue(new Date(year, month, day, 21, 0, 0));
+        }
+
+        if (cell.getValue() instanceof Date) {
+            cell.setNumberFormat('dddd DD MMMM YYYY - HH:mm');
+        }
+
+        // if match title is color #cc6600, set the value Prestige to the matchIsPrestigeRange cell
+        const matchTitleCell = matchTitleRange.getCell(i, 1);
+        if (matchTitleCell.getFontColorObject().getColorType() === SpreadsheetApp.ColorType.RGB && matchTitleCell.getFontColorObject().asRgbColor().asHexString() === '#cc6600') {
+            matchIsPrestigeRange.getCell(i, 1).setValue('Prestige').setFontColorObject(matchTitleCell.getFontColorObject());
+        }
+        else {
+            matchIsPrestigeRange.getCell(i, 1).setValue('');
+        }
     }
-
 }
 
 function getYear(sheet) {
     const cell = sheet.getActiveCell();
-        // get the year, it should be the closest cell in above rows that contains the year in the format 2021
+    // get the year, it should be the closest cell in above rows that contains the year in the format 2021
     // iterate over the rows above the current cell to find the year
     let year;
     // convert the year to a string
@@ -49,17 +79,14 @@ function convertWeekEndDateToDateTime(cellValue, year) {
         throw new Error('Date not found');
     }
 
-    const monthInFrench = date.split(' ')[1];
-    // if the month is not found, throw an error
-    if (!monthInFrench) {
-        throw new Error('Month not found');
-    }
-
-    // get the month in JS index
-    const month = getMonthJSIndex(monthInFrench);
-    // get the day
-    const day = parseInt(date.split(' ')[0]);
     // create the date
+    return parseDateWithRegExp(date, year);
+}
+
+function parseDateWithRegExp(date, year) {
+    const day = parseInt(date.match(/\d+/)[0]);
+    const monthInFrench = date.match(/[A-Z]+/)[0];
+    const month = getMonthJSIndex(monthInFrench);
     return new Date(year, month, day, 21, 0, 0);
 }
 
@@ -67,4 +94,5 @@ function getMonthJSIndex(month) {
     const months = ['JANVIER', 'FEVRIER', 'MARS', 'AVRIL', 'MAI', 'JUIN', 'JUILLET', 'AOUT', 'SEPTEMBRE', 'OCTOBRE', 'NOVEMBRE', 'DECEMBRE'];
     return months.indexOf(month);
 }
+
 

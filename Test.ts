@@ -6,6 +6,11 @@ function testAll() {
     testGetRaffleDateThursday_shouldReturnWednesdayOfTheWeekBefore();
     testGetRaffleDateWednesday_shouldReturnWednesdayOfTheWeekBefore();
     testGetRaffleDateTuesday_shouldReturnWednesdayOfTheWeekBefore();
+    testRandomlySelect2names();
+    testGetMonthJSIndex_shouldReturnCorrectIndexWithJanuaryReturn0();
+    testConvertWeekEndDateToDateTime_with_WEEK_END_DU_27_AOUT_shouldReturnCorrectDate();
+    testParseDateWithRegExp_shouldReturnTheCorrectDate();
+    testParseDateWithRegExp_withnoSpace_shouldReturnCorrectDate();
 }
 
 function testGetRaffleDateSunday_shouldReturnFridayOfTheWeekBefore() {
@@ -54,19 +59,13 @@ function testGetRaffleDateTuesday_shouldReturnWednesdayOfTheWeekBefore() {
     assertSameDate(getRaffleDate(date), new Date(2024, 4, 1, 12, 0, 0), "getRaffleDate should return the date of the week before the match date");
 }
 
-function assertSameDate(date1, date2, message) {
-    if (date1.toString() !== date2.toString()) {
-        throw new Error(message + ` ${date1} is not equal to ${date2}`);
-    }
-}
-
 function testRandomlySelect2names() {
     const winners = randomlySelect2names(["djamel-eddine", "Dorian", "Ilaria", "Maroun", "Joseph", "Maroun", "Joseph"]);
     Logger.log(winners.join(','));
 }
 
 // test NewSeason.ts
-function testGetMonthJSIndex() {
+function testGetMonthJSIndex_shouldReturnCorrectIndexWithJanuaryReturn0() {
     assertEqual(getMonthJSIndex("JANVIER"), 0, "getMonthJSIndex should return 0 for JANVIER");
     assertEqual(getMonthJSIndex("FEVRIER"), 1, "getMonthJSIndex should return 1 for FEVRIER");
     assertEqual(getMonthJSIndex("MARS"), 2, "getMonthJSIndex should return 2 for MARS");
@@ -81,16 +80,38 @@ function testGetMonthJSIndex() {
     assertEqual(getMonthJSIndex("DECEMBRE"), 11, "getMonthJSIndex should return 11 for DECEMBRE");
 }
 
+function testConvertWeekEndDateToDateTime_with_WEEK_END_DU_27_AOUT_shouldReturnCorrectDate() {
+    const year = 2023;
+    const date = "WEEK END DU 27 AOUT";
+    const newDate = convertWeekEndDateToDateTime(date, year);
+    Logger.log(newDate);
+    assertSameDate(newDate, new Date(2023, 7, 27, 21, 0, 0).toString(), "convertWeekEndDateToDateTime should return the correct date");
+}
+
+function testParseDateWithRegExp_shouldReturnTheCorrectDate() {
+    const year = 2023;
+    const date = "27 AOUT";
+    const newDate = parseDateWithRegExp(date, year);
+    Logger.log(newDate);
+    assertSameDate(newDate, new Date(2023, 7, 27, 21, 0, 0).toString(), "parseDateWithRegExp should return the correct date");
+}
+
+function testParseDateWithRegExp_withnoSpace_shouldReturnCorrectDate() {
+    const year = 2023;
+    const date = "27AOUT";
+    const newDate = parseDateWithRegExp(date, year);
+    Logger.log(newDate);
+    assertSameDate(newDate, new Date(2023, 7, 27, 21, 0, 0).toString(), "parseDateWithRegExp should return the correct date");
+}
+
 function assertEqual(actual, expected, message) {
     if (actual !== expected) {
         throw new Error(message + ` ${actual} is not equal to ${expected}`);
     }
 }
 
-function testConvertWeekEndDateToDateTime() {
-    const year = 2023;
-    const date = "WEEK END DU 27 AOUT";
-    const newDate = convertWeekEndDateToDateTime(date, year);
-    Logger.log(newDate);
-    assertSameDate(newDate, new Date(2023, 7, 27, 21, 0, 0).toString(), "convertWeekEndDateToDateTime should return the correct date");
+function assertSameDate(date1, date2, message) {
+    if (date1.toString() !== date2.toString()) {
+        throw new Error(message + ` ${date1} is not equal to ${date2}`);
+    }
 }

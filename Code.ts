@@ -2,7 +2,7 @@ function onOpen() {
   // create a menu in the spreadsheet to run the function in NewSeason.ts
   const ui = SpreadsheetApp.getUi();
   ui.createMenu('PSG')
-    .addItem('Convert selected WEEK END DU to date time', 'runConvertWeekEndDateToDateTime')
+    .addItem('Format dates and set Prestige', 'runConvertWeekEndDateToDateTime')
     .addToUi();
 }
 
@@ -121,16 +121,16 @@ function performRaffle() {
 }
 
 function getAndFilterNames(sheet, participant_names) {
-    // filer the names if it is a prestige game excluding the ones that already won
-    let filtered_names = participant_names;
-    // if f3 has the value "Prestige"
-    if (sheet.getRange('F3').getValue() === "Prestige") {
-      // filter out the names from E9 to E43 where column J does not have the value start with "déjà tiré"
-      filtered_names = participant_names.filter((name, i) => !sheet.getRange(`J${i + 9}`).getValue().toString().startsWith("déjà tiré"));
-    }
-    // append with the names of participants coming to the match: from E9 to E43 but only the ones where column I is true and where column J does not have the value start with "déjà tiré 2 fois"
-    const names = filtered_names.concat(sheet.getRange('E9:E43').getValues().flat().filter((name, i) => sheet.getRange(`I${i + 9}`).getValue() === true && !sheet.getRange(`J${i + 9}`).getValue().toString().startsWith("déjà tiré 2 fois")));
-    return names;
+  // filer the names if it is a prestige game excluding the ones that already won
+  let filtered_names = participant_names;
+  // if f3 has the value "Prestige"
+  if (sheet.getRange('F3').getValue() === "Prestige") {
+    // filter out the names from E9 to E43 where column J does not have the value start with "déjà tiré"
+    filtered_names = participant_names.filter((name, i) => !sheet.getRange(`J${i + 9}`).getValue().toString().startsWith("déjà tiré"));
+  }
+  // append with the names of participants coming to the match: from E9 to E43 but only the ones where column I is true and where column J does not have the value start with "déjà tiré 2 fois"
+  const names = filtered_names.concat(sheet.getRange('E9:E43').getValues().flat().filter((name, i) => sheet.getRange(`I${i + 9}`).getValue() === true && !sheet.getRange(`J${i + 9}`).getValue().toString().startsWith("déjà tiré 2 fois")));
+  return names;
 }
 
 function randomlySelect2names(names) {
