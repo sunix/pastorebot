@@ -3,6 +3,7 @@ function onOpen() {
   const ui = SpreadsheetApp.getUi();
   ui.createMenu('PSG')
     .addItem('Format dates and set Prestige', 'runConvertWeekEndDateToDateTime')
+    .addItem('Init checkboxes', 'initGenMatchCheckbox')
     .addToUi();
 }
 
@@ -51,6 +52,8 @@ function genMatch(e) {
   newSheet.showSheet();
   cell.setValue(" ");
   cell.clearFormat();
+  // set the link to the new sheet in the cell
+  cell.setValue('=HYPERLINK("' + newSheet.getSheetId() + '","' + gameName + '")');
 
   // get the raffle date
   const raffleDate = getRaffleDate(gameDateTime);

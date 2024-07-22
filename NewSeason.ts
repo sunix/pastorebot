@@ -1,3 +1,44 @@
+
+
+function initGenMatchCheckbox() {
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+
+
+    if (!sheet.getRange('E4').getValue()) {
+
+        // set the value of E4 with Génerer feuille de match (mettre a jour la date si besoin) and set the style with the one from D4
+        const cell = sheet.getRange('E4');
+        cell.setValue('Génerer feuille de match');
+        cell.setFontColorObject(sheet.getRange('D4').getFontColorObject());
+        cell.setFontSize(sheet.getRange('D4').getFontSize());
+        cell.setFontWeight(sheet.getRange('D4').getFontWeight());
+        cell.setFontFamily(sheet.getRange('D4').getFontFamily());
+        // set auto wrap to true
+        cell.setWrap(true);
+    }
+
+
+
+    const matchDateRange = sheet.getRange('B:B');
+    const matchTitleRange = sheet.getRange('C:C');
+    const matchPriceRange = sheet.getRange('D:D');
+    const matchGenMatchRange = sheet.getRange('E:E');
+
+    // get the last row
+    const lastRow = 50;
+    // iterate through the cells
+    for (let i = 1; i <= lastRow; i++) {
+        // if matchDateRange cell and matchTitleRange cell are not empty, set the value of matchGenMatchRange cell to a checkbox
+        const matchDateCell = matchDateRange.getCell(i, 1);
+        const matchTitleCell = matchTitleRange.getCell(i, 1);
+        const matchGenMatchCell = matchGenMatchRange.getCell(i, 1);
+        const matchPriceCell = matchPriceRange.getCell(i, 1);
+        if (matchDateCell.getValue() && matchTitleCell.getValue() && matchPriceCell.getValue() && !matchGenMatchCell.getValue()) {
+            matchGenMatchCell.insertCheckboxes();
+        }
+    }
+}
+
 // create a function that take the current sheet cell value in the format WEEK END DU 13 AOUT and convert it to the date time format with time 21:00:00 by default
 function runConvertWeekEndDateToDateTime() {
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
@@ -8,7 +49,6 @@ function runConvertWeekEndDateToDateTime() {
     const matchDateRange = sheet.getRange('B:B');
     const matchTitleRange = sheet.getRange('C:C');
     const matchIsPrestigeRange = sheet.getRange('A:A');
-    const matchGenMatchRange = sheet.getRange('D:D');
 
     // get the last row
     const lastRow = 50;
