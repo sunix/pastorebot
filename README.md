@@ -4,25 +4,34 @@ This repository contains scripts for managing ticket raffles for PSG football ma
 
 ## Overview
 
-When a PSG football match is scheduled, these scripts help in initializing pages with the necessary information. Following this setup, a raffle is conducted to distribute the tickets.
+These scripts help initialize pages with the necessary information whenever a PSG football match is scheduled. Following this setup, a raffle is conducted to distribute the tickets.
 
 ## Setup Instructions
 
-### Clone the project
+### Clone the Project
+
 ```bash
 git clone https://github.com/sunix/pastorebot
 cd pastorebot
 ```
 
-### Initialize the google app project
-Edit .clasp.json
-Replace the root folder and the Google App Script ID from your Googleapp project
+### Initialize the Google App Project
 
-### Making Modifications
+Edit the `.clasp.json` file:
+1. Replace the root folder.
+2. Replace the Google App Script ID with your project’s Script ID. You can find it in Extensions > Apps Script > Project Settings > Script ID.
 
-After setting up the repository, you can make necessary modifications to the scripts.
+### Login to Google App Script
 
-### Synchronizing Changes
+```bash
+clasp login
+```
+
+### Make Modifications
+
+After setting up the repository, you can make necessary modifications to the scripts as needed.
+
+### Synchronize Changes
 
 Once your modifications are complete, synchronize them with the main Google App Script repository:
 
@@ -32,38 +41,38 @@ clasp push
 
 ## Additional Configuration
 
-- **Google App Script ID:** The example uses a placeholder script ID. Set up your own script and create or update the `.clasp.json` file accordingly.
+- **Google App Script ID:** The example uses a placeholder script ID. Set up your own script and update the `.clasp.json` file accordingly.
 
 ## Initial Repository Setup
 
-Here's how I setted up this repository for the first time, from an existing Google appscript:
+Here’s how the repository was initially set up from an existing Google App Script:
 
-0. **Login**
-   ```bash
-   clasp login
-   ```
+### Login to Google App Script
 
-1. **Create and navigate to the project directory:**
+```bash
+clasp login
+```
 
-   ```bash
-   mkdir pastorebot
-   cd pastorebot/
-   ```
+### Create and Navigate to the Project Directory
 
-2. **Clone the project using `clasp`:**
+```bash
+mkdir pastorebot
+cd pastorebot/
+```
 
-   ```bash
-   clasp clone 1Ab2Cd3EfGh_IjKlMnO--pQrStUvWxYz456-7890wJXsQNiKvJidRAUra
-   ```
-   **Note:** The above Google App Script ID is a placeholder. You'll need to replace it with your actual script ID.
+### Clone the Project Using `clasp`
 
-3. **Review the cloned files:**
+```bash
+clasp clone 1Ab2Cd3EfGh_IjKlMnO--pQrStUvWxYz456-7890wJXsQNiKvJidRAUra
+```
+**Note:** The above Google App Script ID is a placeholder. Replace it with your actual script ID.
 
-   The clone operation should retrieve files like `appsscript.json` and `Code.js`. Pay attention to any files that are not ignored by `.clasp`.
+### Review the Cloned Files
 
-4. **Open the project in your code editor:**
+The clone operation should retrieve files like `appsscript.json` and `Code.js`. Pay attention to any files not ignored by `.clasp`.
 
-   ```bash
-   code .
-   ```
+### Open the Project in Your Code Editor
 
+```bash
+code .
+```
