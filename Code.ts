@@ -53,7 +53,7 @@ function genMatch(e) {
   cell.setValue(" ");
   cell.clearFormat();
   // set the link to the new sheet in the cell
-  cell.setValue('=HYPERLINK("' + newSheet.getSheetId() + '","' + gameName + '")');
+  addLinkToNewSheet(newSheet, cell);
 
   // get the raffle date
   const raffleDate = getRaffleDate(gameDateTime);
@@ -61,6 +61,16 @@ function genMatch(e) {
   createTimeTrigger(newSheet.getName(), raffleDate);
   // in c4, set the raffle date
   newSheet.getRange('C5').setValue("Tirage le " + frenchDate(raffleDate));
+}
+
+function addLinkToNewSheet(newSheet, cell) {
+  const url = newSheet.getParent().getUrl();
+  // get the sheet ID of the sheet "test"
+  const sheetId = newSheet.getParent().getSheetByName(newSheet.getName())?.getSheetId();
+  // create the link
+  const link = `${url}#gid=${sheetId}`;
+  const richtextval = SpreadsheetApp.newRichTextValue().setText(newSheet.getName()).setLinkUrl(link).build();
+  cell.setRichTextValue(richtextval);
 }
 
 function performRaffle() {
