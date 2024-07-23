@@ -115,3 +115,12 @@ function assertSameDate(date1, date2, message) {
         throw new Error(message + ` ${date1} is not equal to ${date2}`);
     }
 }
+
+
+function searchUserIdWithEmail() {
+    const email = "aollagno@redhat.com";
+    const people = People.People as any; // Type assertion to ensure 'People' object is defined
+    const user = people.searchDirectoryPeople({ query: email, readMask: 'emailAddresses', sources: ['DIRECTORY_SOURCE_TYPE_DOMAIN_PROFILE'] }).people[0];
+    const userid=user.resourceName.split('/')[1];
+    console.log(userid);
+}
