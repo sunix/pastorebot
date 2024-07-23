@@ -1,4 +1,4 @@
-# PSG Google Sheet Ticket Raffle
+# Pastorebot: PSG Google Sheet Ticket Raffle
 
 This repository contains scripts for managing ticket raffles for PSG football matches. It automates the process of setting up pages with the correct pricing and date details for each match.
 
@@ -8,15 +8,46 @@ When a PSG football match is scheduled, these scripts help in initializing pages
 
 ## Setup Instructions
 
-### Initial Repository Setup
+### Clone the project
+```bash
+git clone https://github.com/sunix/pastorebot
+cd pastorebot
+```
 
-Here's how to set up this repository for the first time:
+### Initialize the google app project
+Edit .clasp.json
+Replace the root folder and the Google App Script ID from your Googleapp project
+
+### Making Modifications
+
+After setting up the repository, you can make necessary modifications to the scripts.
+
+### Synchronizing Changes
+
+Once your modifications are complete, synchronize them with the main Google App Script repository:
+
+```bash
+clasp push
+```
+
+## Additional Configuration
+
+- **Google App Script ID:** The example uses a placeholder script ID. Set up your own script and create or update the `.clasp.json` file accordingly.
+
+## Initial Repository Setup
+
+Here's how I setted up this repository for the first time, from an existing Google appscript:
+
+0. **Login**
+   ```bash
+   clasp login
+   ```
 
 1. **Create and navigate to the project directory:**
 
    ```bash
-   mkdir tirage-psg
-   cd tirage-psg/
+   mkdir pastorebot
+   cd pastorebot/
    ```
 
 2. **Clone the project using `clasp`:**
@@ -35,21 +66,4 @@ Here's how to set up this repository for the first time:
    ```bash
    code .
    ```
-
-### Making Modifications
-
-After setting up the repository, you can make necessary modifications to the scripts.
-
-### Synchronizing Changes
-
-Once your modifications are complete, synchronize them with the main Google App Script repository:
-
-```bash
-clasp push
-```
-
-## Additional Configuration
-
-- **Google App Script ID:** The example uses a placeholder script ID. Set up your own script and create or update the `.clasp.json` file accordingly.
-
 
